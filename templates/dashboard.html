@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h2 class="mb-4">SmartSpend Dashboard</h2>
+
+<div class="mb-3">
+<a href="{% url 'add_income' %}" class="btn btn-success">+ Add Income</a>
+<a href="{% url 'add_expense' %}" class="btn btn-danger">+ Add Expense</a>
+</div>
+
+<div class="row">
+
+<div class="col-md-4">
+<div class="card text-white bg-success mb-3">
+<div class="card-body">
+<h5 class="card-title">Total Income</h5>
+<h2>${{ total_income }}</h2>
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card text-white bg-danger mb-3">
+<div class="card-body">
+<h5 class="card-title">Total Expense</h5>
+<h2>${{ total_expense }}</h2>
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+<div class="card text-white bg-primary mb-3">
+<div class="card-body">
+<h5 class="card-title">Savings</h5>
+<h2>${{ savings }}</h2>
+</div>
+</div>
+</div>
+
+</div>
+
+<hr>
+
+<h4>Recent Income</h4>
+<ul class="list-group mb-4">
+{% for income in recent_incomes %}
+<li class="list-group-item">
++ {{ income.source }} — ${{ income.amount }}
+</li>
+{% empty %}
+<li class="list-group-item">No income yet</li>
+{% endfor %}
+</ul>
+
+<h4>Recent Expenses</h4>
+<ul class="list-group">
+{% for expense in recent_expenses %}
+<li class="list-group-item">
+- {{ expense.category }} — ${{ expense.amount }}
+</li>
+{% empty %}
+<li class="list-group-item">No expenses yet</li>
+{% endfor %}
+</ul>
+
+</div>
+<hr>
+
+<h4>Expense Breakdown</h4>
+
+<canvas id="expenseChart"></canvas>
+<script>
+
+const ctx = document.getElementById('expenseChart');
+
+new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: {{ categories|safe }},
+        datasets: [{
+            label: 'Expenses',
+            data: {{ category_totals|safe }},
+        }]
+    }
+});
+
+</script>
+{% endblock %}
