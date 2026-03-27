@@ -2,12 +2,15 @@ from django.db.models import Sum
 
 # Create your views here.
 from django.shortcuts import render, redirect
-from .models import Income, Expense
+from .models import Income, Expense, Budget
 from .forms import IncomeForm, RegisterForm, ExpenseForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate, login
 from django.contrib import messages
-
+from datetime import timedelta
+from django.utils.timezone import now
+from django.db.models import Sum
+from datetime import datetime
 @login_required
 def dashboard(request):
 
@@ -16,6 +19,25 @@ def dashboard(request):
 
     total_income = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
     total_expense = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+
+    today = now().date()
+
+    # Tổng tiền tiêu hôm nay
+    today_expense = expenses.filter(date=today).aggregate(Sum('amount'))['amount__sum'] or 0
+
+    # Lấy data 7 ngày gần nhất
+    last_7_days = expenses.filter(date__gte=today - timedelta(days=7))
+
+    avg_daily = 0
+
+    if last_7_days.exists():
+        avg_daily = (last_7_days.aggregate(Sum('amount'))['amount__sum'] or 0) / 7
+
+    # Tạo warning
+    warning = None
+
+    if avg_daily > 0 and today_expense > avg_daily * 2:
+        warning = "⚠ You are spending unusually high today!"
 
     savings = total_income - total_expense
 
@@ -37,7 +59,9 @@ def dashboard(request):
         "recent_incomes": recent_incomes,
         "recent_expenses": recent_expenses,
         "categories": categories,
-        "category_totals": category_totals
+        "category_totals": category_totals,
+        "warning": warning,
+
     }
 
     return render(request, "dashboard.html", context)
@@ -89,3 +113,4 @@ def user_login(request):
         else:
             messages.error(request, "Invalid username or password.")
     return render(request, "login.html")
+

@@ -4,11 +4,16 @@
 
 <h2>Add Expense</h2>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
+<form method="POST">
 
-    <button type="submit">Add Expense</button>
+{% csrf_token %}
+
+{{ form.as_p }}
+
+<button type="submit" class="btn btn-danger w-100 py-2 fw-bold">
+💾 Save Expense
+</button>
+
 </form>
 
 {% endblock %}

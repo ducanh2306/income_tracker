@@ -2,13 +2,24 @@
 
 {% block content %}
 
-<div class="container mt-4">
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2 class="mb-4">SmartSpend Dashboard</h2>
+<h2>SmartSpend Dashboard</h2>
+{% if warning %}
+<div class="alert alert-danger mt-3 shadow-sm">
+    <strong>Alert:</strong> {{ warning }}
+</div>
+{% endif %}
+<div>
+<a href="{% url 'add_income' %}" class="btn btn-success me-2">
++ Income
+</a>
 
-<div class="mb-3">
-<a href="{% url 'add_income' %}" class="btn btn-success">+ Add Income</a>
-<a href="{% url 'add_expense' %}" class="btn btn-danger">+ Add Expense</a>
+<a href="{% url 'add_expense' %}" class="btn btn-danger">
++ Expense
+</a>
+</div>
+
 </div>
 
 <div class="row">
@@ -44,22 +55,49 @@
 
 <hr>
 
+<hr>
+
+<div class="row mt-4">
+
+<!-- LEFT: CHART -->
+<div class="col-md-6">
+<div class="card p-3 mb-3">
+
+<h4>Expense Breakdown</h4>
+
+<canvas id="expenseChart" style="max-height:300px;"></canvas>
+
+</div>
+</div>
+
+
+<!-- RIGHT: RECENT DATA -->
+<div class="col-md-6">
+
+<div class="card p-3 mb-3">
 <h4>Recent Income</h4>
-<ul class="list-group mb-4">
+
+<ul class="list-group">
 {% for income in recent_incomes %}
-<li class="list-group-item">
-+ {{ income.source }} — ${{ income.amount }}
+<li class="list-group-item d-flex justify-content-between">
+<span>{{ income.source }}</span>
+<span class="text-success">+ ${{ income.amount }}</span>
 </li>
 {% empty %}
 <li class="list-group-item">No income yet</li>
 {% endfor %}
 </ul>
 
+</div>
+
+<div class="card p-3">
 <h4>Recent Expenses</h4>
+
 <ul class="list-group">
 {% for expense in recent_expenses %}
-<li class="list-group-item">
-- {{ expense.category }} — ${{ expense.amount }}
+<li class="list-group-item d-flex justify-content-between">
+<span>{{ expense.category }}</span>
+<span class="text-danger">- ${{ expense.amount }}</span>
 </li>
 {% empty %}
 <li class="list-group-item">No expenses yet</li>
@@ -67,13 +105,12 @@
 </ul>
 
 </div>
-<hr>
 
-<h4>Expense Breakdown</h4>
+</div>
 
-<canvas id="expenseChart"></canvas>
+</div>
+
 <script>
-
 const ctx = document.getElementById('expenseChart');
 
 new Chart(ctx, {
@@ -81,11 +118,16 @@ new Chart(ctx, {
     data: {
         labels: {{ categories|safe }},
         datasets: [{
-            label: 'Expenses',
             data: {{ category_totals|safe }},
         }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
     }
 });
-
 </script>
+{% for message in messages %}
+  <p style="color:red;">{{ message }}</p>
+{% endfor %}
 {% endblock %}

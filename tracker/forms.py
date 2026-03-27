@@ -6,7 +6,13 @@ from django.contrib.auth.models import User
 class IncomeForm(forms.ModelForm):
     class Meta:
         model = Income
-        fields = ['amount','source','date']
+        fields = ['amount', 'source', 'date']
+
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'source': forms.TextInput(attrs={'class': 'form-control'}),
+        }
 
 class RegisterForm(UserCreationForm):
     class Meta:
@@ -16,4 +22,11 @@ class RegisterForm(UserCreationForm):
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
-        fields = ['amount','category','date','description']
+        fields = ['amount', 'category', 'date', 'description']
+
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control'}),
+            'category': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+        }

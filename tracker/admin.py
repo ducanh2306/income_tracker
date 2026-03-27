@@ -18,7 +18,9 @@ class ExpenseAdmin(admin.ModelAdmin):
 
 @admin.register(Goal)
 class GoalAdmin(admin.ModelAdmin):
-    list_display = ('user','monthly_goal')
+    list_display = ('user', 'monthly_goal')
+    search_fields = ('user__username',)
+
 
 #admin.site.register(Income, IncomeAdmin)
 #admin.site.register(Income)
