@@ -1,4 +1,3 @@
-from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
@@ -16,10 +15,10 @@ class ExpenseAdmin(admin.ModelAdmin):
     list_filter = ('date','category')
     search_fields = ('user__username','category')
 
-@admin.register(Goal)
-class GoalAdmin(admin.ModelAdmin):
-    list_display = ('user', 'monthly_goal')
-    search_fields = ('user__username',)
+#@admin.register(Goal)
+#class GoalAdmin(admin.ModelAdmin):
+#    list_display = ('user', 'monthly_goal')
+#    search_fields = ('user__username',)
 
 
 #admin.site.register(Income, IncomeAdmin)

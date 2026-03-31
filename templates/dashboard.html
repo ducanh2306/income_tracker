@@ -1,15 +1,22 @@
 {% extends "base.html" %}
-
 {% block content %}
 
+<!-- Display user name and warning -->
 <div class="d-flex justify-content-between align-items-center mb-4">
 
-<h2>SmartSpend Dashboard</h2>
-{% if warning %}
+    <h2>Welcome back, {{ request.user.username }} 😊👋</h2>
+{% if warnings %}
 <div class="alert alert-danger mt-3 shadow-sm">
-    <strong>Alert:</strong> {{ warning }}
+    <ul class="mb-0">
+        {% for w in warnings %}
+        <li>{{ w }}</li>
+        {% endfor %}
+    </ul>
 </div>
 {% endif %}
+
+
+ <!-- Display buttons -->
 <div>
 <a href="{% url 'add_income' %}" class="btn btn-success me-2">
 + Income
@@ -19,9 +26,9 @@
 + Expense
 </a>
 </div>
-
 </div>
 
+<!-- Display results total -->
 <div class="row">
 
 <div class="col-md-4">
@@ -50,7 +57,43 @@
 </div>
 </div>
 </div>
+<hr>
 
+<div class="row">
+
+<div class="col-md-6">
+<div class="card p-3 mb-3">
+<h5>Needs (50%)</h5>
+
+<div class="progress mb-2">
+  <div class="progress-bar bg-danger"
+       style="width: {{ need_percent }}%">
+    {{ need_percent|floatformat:0 }}%
+  </div>
+</div>
+
+<p>$ {{ need_expense }}</p>
+
+</div>
+</div>
+
+<div class="col-md-6">
+<div class="card p-3 mb-3">
+<h5>Wants (30%)</h5>
+
+<div class="progress mb-2">
+  <div class="progress-bar bg-warning"
+       style="width: {{ want_percent }}%">
+    {{ want_percent|floatformat:0 }}%
+  </div>
+</div>
+
+<p>$ {{ want_expense }}</p>
+
+</div>
+</div>
+
+</div>
 </div>
 
 <hr>
@@ -76,36 +119,61 @@
 
 <div class="card p-3 mb-3">
 <h4>Recent Income</h4>
-
+<a href="{% url 'income_list' %}" class="btn btn-outline-success btn-sm">
+                View All
+            </a>
 <ul class="list-group">
 {% for income in recent_incomes %}
-<li class="list-group-item d-flex justify-content-between">
-<span>{{ income.source }}</span>
-<span class="text-success">+ ${{ income.amount }}</span>
+<li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>
+        {{ income.source }}
+        <span class="text-success">+ ${{ income.amount }}</span>
+    </span>
+
+    <div>
+        <a href="{% url 'edit_income' income.id %}" class="btn btn-sm btn-outline-primary">
+            Edit
+        </a>
+        <a href="{% url 'delete_income' income.id %}" class="btn btn-sm btn-outline-danger">
+            Delete
+        </a>
+    </div>
 </li>
 {% empty %}
 <li class="list-group-item">No income yet</li>
 {% endfor %}
 </ul>
-
 </div>
+
+
 
 <div class="card p-3">
 <h4>Recent Expenses</h4>
-
+<a href="{% url 'expense_list' %}" class="btn btn-outline-danger btn-sm">
+                View All
+            </a>
 <ul class="list-group">
 {% for expense in recent_expenses %}
-<li class="list-group-item d-flex justify-content-between">
-<span>{{ expense.category }}</span>
-<span class="text-danger">- ${{ expense.amount }}</span>
+<li class="list-group-item d-flex justify-content-between align-items-center">
+    <span>
+        {{ expense.category }}
+        <span class="text-danger">- ${{ expense.amount }}</span>
+    </span>
+
+    <div>
+        <a href="{% url 'edit_expense' expense.id %}" class="btn btn-sm btn-outline-primary">
+            Edit
+        </a>
+        <a href="{% url 'delete_expense' expense.id %}" class="btn btn-sm btn-outline-danger">
+            Delete
+        </a>
+    </div>
 </li>
 {% empty %}
 <li class="list-group-item">No expenses yet</li>
 {% endfor %}
 </ul>
-
 </div>
-
 </div>
 
 </div>
@@ -127,6 +195,8 @@ new Chart(ctx, {
     }
 });
 </script>
+
+
 {% for message in messages %}
   <p style="color:red;">{{ message }}</p>
 {% endfor %}
