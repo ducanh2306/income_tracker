@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 {% block content %}
 
 <!-- Display user name and warning -->
@@ -35,7 +36,7 @@
 <div class="card text-white bg-success mb-3">
 <div class="card-body">
 <h5 class="card-title">Total Income</h5>
-<h2>${{ total_income }}</h2>
+<h2>${{ total_income|floatformat:2|intcomma }}</h2>
 </div>
 </div>
 </div>
@@ -44,7 +45,7 @@
 <div class="card text-white bg-danger mb-3">
 <div class="card-body">
 <h5 class="card-title">Total Expense</h5>
-<h2>${{ total_expense }}</h2>
+<h2>${{ total_expense|floatformat:2|intcomma }}</h2>
 </div>
 </div>
 </div>
@@ -53,7 +54,7 @@
 <div class="card text-white bg-primary mb-3">
 <div class="card-body">
 <h5 class="card-title">Savings</h5>
-<h2>${{ savings }}</h2>
+<h2>${{ savings|floatformat:2|intcomma }}</h2>
 </div>
 </div>
 </div>
@@ -127,7 +128,7 @@
 <li class="list-group-item d-flex justify-content-between align-items-center">
     <span>
         {{ income.source }}
-        <span class="text-success">+ ${{ income.amount }}</span>
+        <span class="text-success">+ ${{ income.amount|floatformat:2|intcomma }}</span>
     </span>
 
     <div>
@@ -157,7 +158,7 @@
 <li class="list-group-item d-flex justify-content-between align-items-center">
     <span>
         {{ expense.category }}
-        <span class="text-danger">- ${{ expense.amount }}</span>
+        <span class="text-danger">- ${{ expense.amount|floatformat:2|intcomma }}</span>
     </span>
 
     <div>
